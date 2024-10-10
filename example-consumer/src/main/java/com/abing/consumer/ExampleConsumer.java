@@ -5,6 +5,7 @@ import com.abing.common.service.UserService;
 import com.abing.core.config.RpcConfig;
 import com.abing.core.proxy.ServiceProxyFactory;
 import com.abing.core.utils.ConfigUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -13,12 +14,13 @@ import java.util.Objects;
  * @Date 2024/9/26 18:06
  * @Description
  */
+@Slf4j
 public class ExampleConsumer {
 
     public static void main(String[] args) {
 
         RpcConfig rpcConfig = ConfigUtils.loadConfig(RpcConfig.class);
-        System.out.println("rpcConfig = " + rpcConfig);
+        log.info("rpcConfig:{}",rpcConfig);
 //        UserService userService = new UserServiceProxy();
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
@@ -28,10 +30,11 @@ public class ExampleConsumer {
         User resUser = userService.getUser(user);
 
         if (Objects.isNull(resUser)){
-            System.out.println("用户不存在");
+            log.info("用户不存在");
         }else {
-            System.out.println("用户存在:" + resUser);
+            log.info("用户存在:" + resUser);
         }
+        System.out.println();
 
     }
 

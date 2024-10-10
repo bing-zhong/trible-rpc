@@ -2,6 +2,7 @@ package com.abing.core;
 
 import com.abing.core.config.RpcConfig;
 import com.abing.core.utils.ConfigUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
  * @Date 2024/10/9 15:55
  * @Description
  */
+@Slf4j
 public class RpcApplication {
 
     public static volatile RpcConfig rpcConfig;
@@ -26,6 +28,7 @@ public class RpcApplication {
             loadConfig = new RpcConfig();
         }
         rpcConfig = loadConfig;
+        log.info("trible rpc init success,config:{}",rpcConfig);
     }
 
     /**

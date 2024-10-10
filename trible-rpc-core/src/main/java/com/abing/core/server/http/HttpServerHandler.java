@@ -1,9 +1,9 @@
 package com.abing.core.server.http;
 
-import com.abing.core.model.RpcRequest;
-import com.abing.core.model.RpcResponse;
+import com.abing.core.model.api.RpcRequest;
+import com.abing.core.model.api.RpcResponse;
 import com.abing.core.register.LocalRegistry;
-import com.abing.core.serialize.JdkSerializer;
+import com.abing.core.serialize.HessianSerializer;
 import com.abing.core.serialize.Serializer;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
@@ -21,7 +21,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest request) {
 
-        Serializer serializer = new JdkSerializer();
+        Serializer serializer = new HessianSerializer();
 
         System.out.println("request receive method:" + request.method() + ",uri:" + request.uri());
 

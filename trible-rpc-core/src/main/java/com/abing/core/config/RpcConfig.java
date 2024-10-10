@@ -1,5 +1,7 @@
 package com.abing.core.config;
 
+import com.abing.core.registry.RegistryConfig;
+import com.abing.core.serialize.key.SerializerKeys;
 import lombok.Data;
 
 /**
@@ -17,5 +19,9 @@ public class RpcConfig {
     private String host = "localhost";
 
     private Integer port = 8080;
+
+    private SerializerKeys serialization = SerializerKeys.JDK;
+
+    private RegistryConfig registry = new RegistryConfig();
 
 }

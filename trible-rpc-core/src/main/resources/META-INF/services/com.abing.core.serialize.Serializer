@@ -1,0 +1,2 @@
+com.abing.core.serialize.JdkSerializer
+com.abing.core.serialize.HessianSerializer

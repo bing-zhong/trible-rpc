@@ -1,4 +1,4 @@
-package com.abing.core.model;
+package com.abing.core.model.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

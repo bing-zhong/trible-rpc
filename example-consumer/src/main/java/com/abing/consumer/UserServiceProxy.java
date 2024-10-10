@@ -4,8 +4,8 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.abing.common.model.User;
 import com.abing.common.service.UserService;
-import com.abing.core.model.RpcRequest;
-import com.abing.core.model.RpcResponse;
+import com.abing.core.model.api.RpcRequest;
+import com.abing.core.model.api.RpcResponse;
 import com.abing.core.serialize.JdkSerializer;
 import com.abing.core.serialize.Serializer;
 
