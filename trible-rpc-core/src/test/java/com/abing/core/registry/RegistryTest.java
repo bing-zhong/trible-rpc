@@ -1,68 +1,56 @@
 package com.abing.core.registry;
 
-import cn.hutool.json.JSONUtil;
-import com.abing.core.constant.RpcConstant;
 import com.abing.core.model.registry.ServiceMetaInfo;
-import io.etcd.jetcd.ByteSequence;
-import io.etcd.jetcd.Client;
-import io.etcd.jetcd.KV;
-import io.etcd.jetcd.Lease;
-import io.etcd.jetcd.options.PutOption;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 /**
  * @Author CaptainBing
- * @Date 2024/10/10 16:08
+ * @Date 2024/10/10 18:12
  * @Description
  */
 class RegistryTest {
 
-    private static Client client;
+    private static Registry registry = new EtcdRegistry();
 
-    private static KV kvClient;
 
     @BeforeAll
     static void init() {
-        client = Client.builder()
-              .endpoints("http://localhost:2379")
-              .build();
-        kvClient = client.getKVClient();
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setAddress("http://localhost:2379");
+        registry.init(registryConfig);
     }
 
     @Test
-    void testPut(){
+    void testRegister() {
+        ServiceMetaInfo serviceMetaInfo1 = new ServiceMetaInfo();
+        serviceMetaInfo1.setServiceName("com.abing.rpc.service.UserService");
+        serviceMetaInfo1.setServiceHost("127.0.0.1");
+        serviceMetaInfo1.setServicePort(8081);
+        registry.register(serviceMetaInfo1);
+        ServiceMetaInfo serviceMetaInfo2 = new ServiceMetaInfo();
+        serviceMetaInfo2.setServiceName("com.abing.rpc.service.UserService");
+        serviceMetaInfo2.setServiceHost("127.0.0.1");
+        serviceMetaInfo2.setServicePort(8082);
+        registry.register(serviceMetaInfo2);
+        ServiceMetaInfo serviceMetaInfo3 = new ServiceMetaInfo();
+        serviceMetaInfo3.setServiceName("com.abing.rpc.service.UserService");
+        serviceMetaInfo3.setServiceVersion("2.0.0");
+        serviceMetaInfo3.setServiceHost("127.0.0.1");
+        serviceMetaInfo3.setServicePort(8083);
+        registry.register(serviceMetaInfo3);
+    }
+
+    @AfterAll
+    static void testServiceDiscovery() {
         ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
-        serviceMetaInfo.setServiceHost("localhost");
-        serviceMetaInfo.setServicePort(8080);
-        serviceMetaInfo.setServiceName("com.abing.user");
-        Lease leaseClient = client.getLeaseClient();
-        long leaseId = leaseClient.grant(30).join().getID();
-        String registryKey = RpcConstant.REGISTRY_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
-        ByteSequence key = ByteSequence.from(registryKey, StandardCharsets.UTF_8);
-        ByteSequence value = ByteSequence.from(JSONUtil.toJsonStr(serviceMetaInfo), StandardCharsets.UTF_8);
-        PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
-        kvClient.put(key,value,putOption).join();
-    }
-
-    @Test
-    void testDelete(){
-        kvClient.delete(bytesOf("/abc/test/test1")).join();
-    }
-
-
-    /**
-     * 将字符串转为客户端所需的ByteSequence实例
-     * @param val
-     * @return
-     */
-    private static ByteSequence bytesOf(String val) {
-        return ByteSequence.from(val, UTF_8);
+        serviceMetaInfo.setServiceName("com.abing.rpc.service.UserService");
+        List<ServiceMetaInfo> serviceMetaInfos = registry.serviceDiscover(serviceMetaInfo.getServiceByPrefix());
+        Assertions.assertEquals(2,serviceMetaInfos.size());
     }
 
 

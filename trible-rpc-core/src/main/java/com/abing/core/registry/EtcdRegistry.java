@@ -59,7 +59,7 @@ public class EtcdRegistry implements Registry {
                 .builder()
                 .isPrefix(true)
                 .build();
-        String key = RpcConstant.REGISTRY_ROOT_PATH + serviceName + "/";
+        String key = RpcConstant.REGISTRY_ROOT_PATH + serviceName;
         List<KeyValue> keyValues = kvClient
                 .get(ByteSequence.from(key, StandardCharsets.UTF_8), getOption)
                 .join()

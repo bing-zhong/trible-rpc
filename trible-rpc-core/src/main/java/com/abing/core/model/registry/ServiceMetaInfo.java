@@ -34,10 +34,10 @@ public class ServiceMetaInfo {
     private String group = RpcConstant.DEFAULT_SERVICE_GROUP;
 
     /**
-     * 获取服务key
+     * 获取服务key,根据前缀匹配
      * @return
      */
-    public String getServiceKey() {
+    public String getServiceByPrefix() {
         return String.format("%s:%s:%s", serviceName, serviceVersion, group);
     }
 
