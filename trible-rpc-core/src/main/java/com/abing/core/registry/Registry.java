@@ -2,6 +2,7 @@ package com.abing.core.registry;
 
 import com.abing.core.model.registry.ServiceMetaInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,5 +41,19 @@ public interface Registry {
      * 销毁注册中心
      */
     void destroy();
+
+    /**
+     * 获取注册中心
+     * @param registryKeys
+     * @return
+     */
+    static Registry getInstance(RegistryKeys registryKeys) {
+        for (RegistryKeys key : RegistryKeys.values()) {
+            if (key.equals(registryKeys)){
+                return key.getRegistry();
+            }
+        }
+        throw new EnumConstantNotPresentException(RegistryKeys.class, "不支持的注册中心类型");
+    }
 
 }

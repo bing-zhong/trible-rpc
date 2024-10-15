@@ -49,4 +49,8 @@ public class ServiceMetaInfo {
         return String.format("%s:%s:%s:%s:%s", serviceName, serviceVersion, group, serviceHost,servicePort);
     }
 
+    public String getServiceAddress() {
+        return String.format("%s:%s", serviceHost, servicePort);
+    }
+
 }
