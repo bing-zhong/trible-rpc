@@ -2,7 +2,6 @@ package com.abing.core.registry;
 
 import com.abing.core.model.registry.ServiceMetaInfo;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,9 +19,13 @@ public interface Registry {
 
     /**
      * 心跳检测
-     *
      */
     void heartbeat();
+
+    /**
+     * 监听服务
+     */
+    void watch(String serviceNodeKey);
 
     /**
      * 注册服务
@@ -32,9 +35,9 @@ public interface Registry {
 
     /**
      * 取消注册服务
-     * @param serviceMetaInfo
+     * @param serviceNodeKey
      */
-    void unRegister(ServiceMetaInfo serviceMetaInfo);
+    void unRegister(String serviceNodeKey);
 
     /**
      * 服务发现

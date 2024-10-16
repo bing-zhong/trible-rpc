@@ -31,8 +31,6 @@ public class ExampleProvider {
         serviceMetaInfo1.setServicePort(rpcConfig.getPort());
         registry.register(serviceMetaInfo1);
 
-        registry.register(serviceMetaInfo1);
-
         VertxHttpServer vertxHttpServer = new VertxHttpServer();
         vertxHttpServer.doStart(rpcConfig.getPort());
     }

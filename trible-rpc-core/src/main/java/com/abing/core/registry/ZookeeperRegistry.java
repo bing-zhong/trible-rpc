@@ -22,13 +22,19 @@ public class ZookeeperRegistry implements Registry{
 
     }
 
+
+    @Override
+    public void watch(String serviceNodeKey) {
+
+    }
+
     @Override
     public void register(ServiceMetaInfo serviceMetaInfo) {
 
     }
 
     @Override
-    public void unRegister(ServiceMetaInfo serviceMetaInfo) {
+    public void unRegister(String serviceNodeKey) {
 
     }
 

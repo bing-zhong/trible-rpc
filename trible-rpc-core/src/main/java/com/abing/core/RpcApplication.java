@@ -18,7 +18,6 @@ public class RpcApplication {
 
     public static volatile RpcConfig rpcConfig;
 
-
     /**
      * 初始化配置
      */
