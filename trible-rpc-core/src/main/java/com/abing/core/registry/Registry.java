@@ -19,6 +19,12 @@ public interface Registry {
     void init(RegistryConfig registryConfig);
 
     /**
+     * 心跳检测
+     *
+     */
+    void heartbeat();
+
+    /**
      * 注册服务
      * @param serviceMetaInfo
      */
