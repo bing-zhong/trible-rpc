@@ -8,6 +8,7 @@ import com.abing.core.serialize.Serializer;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 
@@ -16,15 +17,14 @@ import java.lang.reflect.Method;
  * @Date 2024/9/30 9:58
  * @Description http请求消息处理器
  */
+@Slf4j
 public class HttpServerHandler implements Handler<HttpServerRequest> {
 
     @Override
     public void handle(HttpServerRequest request) {
 
         Serializer serializer = new HessianSerializer();
-
-        System.out.println("request receive method:" + request.method() + ",uri:" + request.uri());
-
+        log.info("request receive method: {}, uri: {}", request.method(), request.uri());
         request.bodyHandler(body -> {
             byte[] bodyBytes = body.getBytes();
             try {
@@ -36,7 +36,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
                 Class<?> serviceClass = LocalRegistry.get(serviceName);
                 Method method = serviceClass.getMethod(methodName, rpcRequest.getParameterTypes());
                 Object result = method.invoke(serviceClass.newInstance(), rpcRequest.getArgs());
-                System.out.println("request receive body:" + rpcRequest);
+                log.info("request receive body: {}", rpcRequest);
 
                 RpcResponse rpcResponse = RpcResponse
                         .builder()

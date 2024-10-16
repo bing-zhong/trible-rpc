@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2024/10/10 13:59
  * @Description
  */
-public class SpiLoader {
+public class SerializerLoader {
 
     private static final Map<String, Class<?>> LOADER_MAP = new ConcurrentHashMap<>();
 

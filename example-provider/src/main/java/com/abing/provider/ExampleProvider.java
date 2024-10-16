@@ -7,7 +7,7 @@ import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.register.LocalRegistry;
 import com.abing.core.registry.Registry;
 import com.abing.core.registry.RegistryConfig;
-import com.abing.core.server.http.VertxHttpServer;
+import com.abing.core.server.tcp.VertxTcpServer;
 
 /**
  * @Author CaptainBing
@@ -31,8 +31,10 @@ public class ExampleProvider {
         serviceMetaInfo1.setServicePort(rpcConfig.getPort());
         registry.register(serviceMetaInfo1);
 
-        VertxHttpServer vertxHttpServer = new VertxHttpServer();
-        vertxHttpServer.doStart(rpcConfig.getPort());
+//        VertxHttpServer vertxHttpServer = new VertxHttpServer();
+//        vertxHttpServer.doStart(rpcConfig.getPort());
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.doStart(rpcConfig.getPort());
     }
 
 }

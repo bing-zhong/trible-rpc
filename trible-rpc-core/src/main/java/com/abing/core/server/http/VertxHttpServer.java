@@ -1,14 +1,16 @@
 package com.abing.core.server.http;
 
-import com.abing.core.server.NetWork;
+import com.abing.core.server.Network;
 import io.vertx.core.Vertx;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author CaptainBing
  * @Date 2024/9/26 17:22
  * @Description
  */
-public class VertxHttpServer implements NetWork {
+@Slf4j
+public class VertxHttpServer implements Network {
 
     @Override
     public void doStart(int port) {
@@ -18,9 +20,9 @@ public class VertxHttpServer implements NetWork {
              .requestHandler(new HttpServerHandler())
              .listen(port,result -> {
                 if (result.succeeded()) {
-                    System.out.println("Server started on port " + port);
+                    log.info("Server started on port {}", port);
                 } else {
-                    System.out.println("Failed to start server: " + result.cause().getMessage());
+                    log.info("Failed to start server: {}", result.cause().getMessage());
                 }
              });
     }

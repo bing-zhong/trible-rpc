@@ -8,14 +8,14 @@ import com.abing.core.serialize.Serializer;
  * @Date 2024/10/10 14:16
  * @Description
  */
-public class SpiFactory {
+public class SerializerFactory {
 
     static {
-        SpiLoader.load(Serializer.class);
+        SerializerLoader.load(Serializer.class);
     }
 
     public static Serializer getInstance(String key){
-        return SpiLoader.getInstance(key);
+        return SerializerLoader.getInstance(key);
     }
 
 }
