@@ -18,6 +18,11 @@ public class ZookeeperRegistry implements Registry{
     }
 
     @Override
+    public void heartbeat() {
+
+    }
+
+    @Override
     public void register(ServiceMetaInfo serviceMetaInfo) {
 
     }

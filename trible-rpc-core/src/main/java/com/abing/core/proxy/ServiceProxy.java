@@ -9,7 +9,6 @@ import com.abing.core.model.api.RpcResponse;
 import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.registry.Registry;
 import com.abing.core.registry.RegistryConfig;
-import com.abing.core.registry.RegistryKeys;
 import com.abing.core.serialize.Serializer;
 import com.abing.core.spi.SpiFactory;
 

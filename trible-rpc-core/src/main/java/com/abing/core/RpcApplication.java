@@ -1,6 +1,8 @@
 package com.abing.core;
 
 import com.abing.core.config.RpcConfig;
+import com.abing.core.registry.Registry;
+import com.abing.core.registry.RegistryConfig;
 import com.abing.core.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,10 @@ public class RpcApplication {
         }
         rpcConfig = loadConfig;
         log.info("trible rpc init success,config:{}",rpcConfig);
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry registry = Registry.getInstance(registryConfig.getRegistry());
+        // 服务提供者正常下线，清理注册中心信息
+        Runtime.getRuntime().addShutdownHook(new Thread(registry::destroy));
     }
 
     /**
@@ -45,6 +51,5 @@ public class RpcApplication {
         }
         return rpcConfig;
     }
-
 
 }
