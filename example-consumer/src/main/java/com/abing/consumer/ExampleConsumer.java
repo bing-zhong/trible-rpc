@@ -2,9 +2,8 @@ package com.abing.consumer;
 
 import com.abing.common.model.User;
 import com.abing.common.service.UserService;
-import com.abing.core.config.RpcConfig;
+import com.abing.core.RpcApplication;
 import com.abing.core.proxy.ServiceProxyFactory;
-import com.abing.core.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -19,8 +18,7 @@ public class ExampleConsumer {
 
     public static void main(String[] args) {
 
-        RpcConfig rpcConfig = ConfigUtils.loadConfig(RpcConfig.class);
-        log.info("rpcConfig:{}",rpcConfig);
+        RpcApplication.init();
 //        UserService userService = new UserServiceProxy();
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();

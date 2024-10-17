@@ -3,6 +3,8 @@ package com.abing.core.proxy;
 import cn.hutool.core.util.IdUtil;
 import com.abing.core.RpcApplication;
 import com.abing.core.config.RpcConfig;
+import com.abing.core.loadbalancer.LoadBalancer;
+import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.model.api.RpcRequest;
 import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.protocol.ProtocolMessage;
@@ -13,12 +15,15 @@ import com.abing.core.registry.Registry;
 import com.abing.core.registry.RegistryConfig;
 import com.abing.core.serialize.key.SerializerKeys;
 import com.abing.core.server.tcp.VertxTcpClient;
+import com.abing.core.spi.LoadBalancerFactory;
 import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author CaptainBing
@@ -28,8 +33,10 @@ import java.util.List;
 @Slf4j
 public class ServiceProxy implements InvocationHandler {
 
+    RpcConfig rpcConfig = RpcApplication.getRpcConfig();
+
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
         String serviceName = method.getDeclaringClass().getName();
         RpcRequest rpcRequest = RpcRequest.builder()
@@ -39,15 +46,26 @@ public class ServiceProxy implements InvocationHandler {
                                           .args(args)
                                           .build();
 
-        RpcConfig rpcConfig = RpcApplication.getRpcConfig();
+        // 注册中心
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
         Registry registry = Registry.getInstance(registryConfig.getRegistry());
         registry.init(registryConfig);
+
         List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscover(serviceName);
-        ServiceMetaInfo serviceMetaInfo = serviceMetaInfoList.get(0);
+        if (serviceMetaInfoList.isEmpty()) {
+            throw new RuntimeException("no service found for " + serviceName);
+        }
+        // 负载均衡
+        LoadBalancerKeys balancerKey = rpcConfig.getBalancer();
+        LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(balancerKey.name());
+        // 将请求方法名作为负载均衡参数
+        Map<String, Object> requestParam = new HashMap<>(1);
+        requestParam.put("methodName",rpcRequest.getMethodName());
+        ServiceMetaInfo serviceMetaInfo = loadBalancer.select(requestParam, serviceMetaInfoList);
 
         ProtocolMessage<RpcRequest> rpcRequestProtocolMessage = getRpcRequestProtocolMessage(rpcRequest, rpcConfig);
-        VertxTcpClient vertxTcpClient = new VertxTcpClient(SocketAddress.inetSocketAddress(serviceMetaInfo.getServicePort(), serviceMetaInfo.getServiceHost()));
+        SocketAddress socketAddress = SocketAddress.inetSocketAddress(serviceMetaInfo.getServicePort(), serviceMetaInfo.getServiceHost());
+        VertxTcpClient vertxTcpClient = new VertxTcpClient(socketAddress);
         return vertxTcpClient.sendMessage(rpcRequestProtocolMessage);
 
     }
@@ -62,6 +80,7 @@ public class ServiceProxy implements InvocationHandler {
         ProtocolMessage.Header header = new ProtocolMessage.Header();
         header.setMagic(ProtocolConstant.PROTOCOL_MAGIC);
         header.setVersion(ProtocolConstant.PROTOCOL_VERSION);
+
         SerializerKeys serializerKey = rpcConfig.getSerialization();
         header.setSerializer((byte) serializerKey.getType());
         header.setMessageType((byte) ProtocolMessageTypeEnum.REQUEST.getCode());

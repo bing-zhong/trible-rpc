@@ -29,7 +29,7 @@ public class RpcApplication {
             loadConfig = new RpcConfig();
         }
         rpcConfig = loadConfig;
-        log.info("trible rpc init success,config:{}",rpcConfig);
+        log.info("trible rpc config init success:{}",rpcConfig);
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
         Registry registry = Registry.getInstance(registryConfig.getRegistry());
         // 服务提供者正常下线，清理注册中心信息

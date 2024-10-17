@@ -11,11 +11,11 @@ import com.abing.core.serialize.Serializer;
 public class SerializerFactory {
 
     static {
-        SerializerLoader.load(Serializer.class);
+        SpiLoader.load(Serializer.class);
     }
 
     public static Serializer getInstance(String key){
-        return SerializerLoader.getInstance(key);
+        return SpiLoader.getInstance(Serializer.class, key);
     }
 
 }

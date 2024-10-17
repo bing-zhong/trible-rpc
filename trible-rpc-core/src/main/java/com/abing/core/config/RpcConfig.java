@@ -1,5 +1,6 @@
 package com.abing.core.config;
 
+import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.registry.RegistryConfig;
 import com.abing.core.serialize.key.SerializerKeys;
 import lombok.Data;
@@ -23,5 +24,7 @@ public class RpcConfig {
     private SerializerKeys serialization = SerializerKeys.JDK;
 
     private RegistryConfig registryConfig = new RegistryConfig();
+
+    private LoadBalancerKeys balancer = LoadBalancerKeys.RANDOM;
 
 }

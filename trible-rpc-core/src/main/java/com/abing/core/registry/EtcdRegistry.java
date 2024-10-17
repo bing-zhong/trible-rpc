@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +45,7 @@ public class EtcdRegistry implements Registry {
                        .build();
         kvClient = client.getKVClient();
         heartbeat();
+        log.info("etcd registry init success: {}",registryConfig);
 
     }
 
@@ -65,7 +67,6 @@ public class EtcdRegistry implements Registry {
                     String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
                     ServiceMetaInfo serviceMetaInfo = JSONUtil.toBean(value, ServiceMetaInfo.class);
                     register(serviceMetaInfo);
-                    log.info("续签成功:{}", serviceMetaInfo);
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(key + ":续签失败", e);
                 }
@@ -106,15 +107,14 @@ public class EtcdRegistry implements Registry {
         Lease leaseClient = client.getLeaseClient();
         int expireTime = 30;
         try {
-            long leaseId = leaseClient.grant(expireTime).get().getID();
+            long leaseId = leaseClient.grant(expireTime).get(expireTime, TimeUnit.SECONDS).getID();
             String registryKey = RpcConstant.REGISTRY_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
             ByteSequence key = ByteSequence.from(registryKey, StandardCharsets.UTF_8);
             ByteSequence value = ByteSequence.from(JSONUtil.toJsonStr(serviceMetaInfo), StandardCharsets.UTF_8);
             PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
             kvClient.put(key,value,putOption).get();
             LOCAL_REGISTER_NODE_KEY_SET.add(registryKey);
-            log.info("服务节点:{} 注册成功", registryKey);
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("服务节点 注册失败:" + serviceMetaInfo.getServiceNodeKey(), e);
         }
 
