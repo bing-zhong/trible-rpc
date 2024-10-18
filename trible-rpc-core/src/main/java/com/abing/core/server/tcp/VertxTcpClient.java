@@ -12,10 +12,7 @@ import io.vertx.core.net.NetSocket;
 import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @Author CaptainBing
@@ -39,43 +36,47 @@ public class VertxTcpClient {
      * 发送消息
      * @param protocolMessage
      */
-    public Object sendMessage(ProtocolMessage<?> protocolMessage) throws Exception{
+    public RpcResponse sendMessage(ProtocolMessage<?> protocolMessage) throws Exception{
 
         CompletableFuture<RpcResponse> responseFuture = new CompletableFuture<>();
         client.connect(address, response -> {
             if (response.succeeded()) {
-                 NetSocket netSocket = response.result();
+                NetSocket netSocket = response.result();
                 Buffer requestBuffer = null;
                 try {
                     requestBuffer = codec.encode(protocolMessage);
-                } catch (IOException e) {
-                    throw new RuntimeException("协议消息编码错误",e);
+                } catch (Exception e) {
+                    responseFuture.completeExceptionally(new RuntimeException("protocol message encode error",e));
+                    throw new RuntimeException("protocol message encode error",e);
                 }
                 netSocket.write(requestBuffer);
                 log.debug("send data: {}", HexUtil.encodeHexStr(requestBuffer.getBytes()));
 
                 RecordParserWrapper recordParserWrapper = new RecordParserWrapper(buffer -> {
-                    log.info("received data: {}", buffer.toString(StandardCharsets.UTF_8));
                     try {
                         ProtocolMessage<RpcResponse> decodeProtocolMessage = (ProtocolMessage<RpcResponse>) codec.decode(buffer);
+                        log.info("received data: {}", decodeProtocolMessage);
                         responseFuture.complete(decodeProtocolMessage.getBody());
-                    } catch (IOException e) {
-                        throw new RuntimeException("协议消息解码错误",e);
+                    } catch (Exception e) {
+                        responseFuture.completeExceptionally(new RuntimeException("protocol message decode error",e));
+
                     }
                 });
                 netSocket.handler(recordParserWrapper);
             }else {
-                log.error("failed to connect: {}", response.cause().getMessage());
+                String errorMessage = String.format("failed to connect: %s", response.cause().getMessage());
+                log.error(errorMessage);
+                responseFuture.completeExceptionally(new RuntimeException(errorMessage));
             }
         });
         RpcResponse rpcResponse = null;
         try {
             rpcResponse = responseFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("获取响应结果失败",e);
+        } catch (Exception e) {
+            throw new RuntimeException("receive response failed",e);
         }
         client.close();
-        return rpcResponse.getData();
+        return rpcResponse;
     }
 
 }

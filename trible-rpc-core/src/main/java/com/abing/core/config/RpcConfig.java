@@ -2,6 +2,8 @@ package com.abing.core.config;
 
 import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.registry.RegistryConfig;
+import com.abing.core.retry.RetryConfig;
+import com.abing.core.retry.RetryKeys;
 import com.abing.core.serialize.key.SerializerKeys;
 import lombok.Data;
 
@@ -26,5 +28,9 @@ public class RpcConfig {
     private RegistryConfig registryConfig = new RegistryConfig();
 
     private LoadBalancerKeys balancer = LoadBalancerKeys.RANDOM;
+
+    private RetryConfig retry = new RetryConfig();
+
+
 
 }

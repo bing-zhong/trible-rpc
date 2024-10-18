@@ -1,0 +1,2 @@
+com.abing.core.retry.DefaultRetryStrategy
+com.abing.core.retry.FixedRetryStrategy

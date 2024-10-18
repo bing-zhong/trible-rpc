@@ -6,6 +6,7 @@ import com.abing.core.config.RpcConfig;
 import com.abing.core.loadbalancer.LoadBalancer;
 import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.model.api.RpcRequest;
+import com.abing.core.model.api.RpcResponse;
 import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.protocol.ProtocolMessage;
 import com.abing.core.protocol.ProtocolMessageStatusEnum;
@@ -13,9 +14,12 @@ import com.abing.core.protocol.ProtocolMessageTypeEnum;
 import com.abing.core.protocol.constants.ProtocolConstant;
 import com.abing.core.registry.Registry;
 import com.abing.core.registry.RegistryConfig;
+import com.abing.core.retry.RetryKeys;
+import com.abing.core.retry.RetryStrategy;
 import com.abing.core.serialize.key.SerializerKeys;
 import com.abing.core.server.tcp.VertxTcpClient;
 import com.abing.core.spi.LoadBalancerFactory;
+import com.abing.core.spi.RetryFactory;
 import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +70,12 @@ public class ServiceProxy implements InvocationHandler {
         ProtocolMessage<RpcRequest> rpcRequestProtocolMessage = getRpcRequestProtocolMessage(rpcRequest, rpcConfig);
         SocketAddress socketAddress = SocketAddress.inetSocketAddress(serviceMetaInfo.getServicePort(), serviceMetaInfo.getServiceHost());
         VertxTcpClient vertxTcpClient = new VertxTcpClient(socketAddress);
-        return vertxTcpClient.sendMessage(rpcRequestProtocolMessage);
+
+        // 重试策略
+        RetryKeys type = rpcConfig.getRetry().getType();
+        RetryStrategy retryStrategy = RetryFactory.getInstance(type.name());
+        RpcResponse rpcResponse = retryStrategy.doRetry(() -> vertxTcpClient.sendMessage(rpcRequestProtocolMessage));
+        return rpcResponse.getData();
 
     }
 

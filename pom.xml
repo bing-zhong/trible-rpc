@@ -27,6 +27,7 @@
         <hessian.version>4.0.66</hessian.version>
         <etcd.version>0.7.7</etcd.version>
         <junit.version>5.7.2</junit.version>
+        <guava.retry.version>2.0.0</guava.retry.version>
     </properties>
 
     <dependencyManagement>
@@ -74,6 +75,12 @@
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.rholder</groupId>
+                <artifactId>guava-retrying</artifactId>
+                <version>${guava.retry.version}</version>
             </dependency>
 
         </dependencies>
