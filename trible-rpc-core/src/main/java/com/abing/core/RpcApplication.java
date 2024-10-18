@@ -30,8 +30,8 @@ public class RpcApplication {
         }
         rpcConfig = loadConfig;
         log.info("trible rpc config init success:{}",rpcConfig);
-        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
-        Registry registry = Registry.getInstance(registryConfig.getRegistry());
+        RegistryConfig registryConfig = rpcConfig.getRegistry();
+        Registry registry = Registry.getInstance(registryConfig.getType());
         // 服务提供者正常下线，清理注册中心信息
         Runtime.getRuntime().addShutdownHook(new Thread(registry::destroy));
     }

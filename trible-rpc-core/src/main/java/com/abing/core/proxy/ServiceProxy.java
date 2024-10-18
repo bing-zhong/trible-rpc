@@ -3,6 +3,7 @@ package com.abing.core.proxy;
 import cn.hutool.core.util.IdUtil;
 import com.abing.core.RpcApplication;
 import com.abing.core.config.RpcConfig;
+import com.abing.core.fault.tolerant.TolerantStrategy;
 import com.abing.core.loadbalancer.LoadBalancer;
 import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.model.api.RpcRequest;
@@ -14,12 +15,13 @@ import com.abing.core.protocol.ProtocolMessageTypeEnum;
 import com.abing.core.protocol.constants.ProtocolConstant;
 import com.abing.core.registry.Registry;
 import com.abing.core.registry.RegistryConfig;
-import com.abing.core.retry.RetryKeys;
-import com.abing.core.retry.RetryStrategy;
+import com.abing.core.fault.retry.RetryKeys;
+import com.abing.core.fault.retry.RetryStrategy;
 import com.abing.core.serialize.key.SerializerKeys;
 import com.abing.core.server.tcp.VertxTcpClient;
 import com.abing.core.spi.LoadBalancerFactory;
 import com.abing.core.spi.RetryFactory;
+import com.abing.core.spi.TolerantFactory;
 import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,8 +53,8 @@ public class ServiceProxy implements InvocationHandler {
                                           .build();
 
         // 注册中心
-        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
-        Registry registry = Registry.getInstance(registryConfig.getRegistry());
+        RegistryConfig registryConfig = rpcConfig.getRegistry();
+        Registry registry = Registry.getInstance(registryConfig.getType());
         registry.init(registryConfig);
 
         List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscover(serviceName);
@@ -74,7 +76,14 @@ public class ServiceProxy implements InvocationHandler {
         // 重试策略
         RetryKeys type = rpcConfig.getRetry().getType();
         RetryStrategy retryStrategy = RetryFactory.getInstance(type.name());
-        RpcResponse rpcResponse = retryStrategy.doRetry(() -> vertxTcpClient.sendMessage(rpcRequestProtocolMessage));
+        RpcResponse rpcResponse = null;
+        try {
+            rpcResponse = retryStrategy.doRetry(() -> vertxTcpClient.sendMessage(rpcRequestProtocolMessage));
+        } catch (Exception e) {
+            // 容错机制
+            TolerantStrategy tolerantStrategy = TolerantFactory.getInstance(rpcConfig.getTolerant().name());
+            rpcResponse = tolerantStrategy.doTolerant(null, e);
+        }
         return rpcResponse.getData();
 
     }

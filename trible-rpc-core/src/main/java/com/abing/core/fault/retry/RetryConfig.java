@@ -1,4 +1,4 @@
-package com.abing.core.retry;
+package com.abing.core.fault.retry;
 
 import lombok.Data;
 

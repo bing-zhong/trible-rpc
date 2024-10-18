@@ -1,4 +1,4 @@
-package com.abing.core.retry;
+package com.abing.core.fault.retry;
 
 import com.abing.core.RpcApplication;
 import com.abing.core.config.RpcConfig;

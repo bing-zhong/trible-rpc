@@ -1,8 +1,7 @@
 package com.abing.core.retry;
 
+import com.abing.core.fault.retry.FixedRetryStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @Author CaptainBing

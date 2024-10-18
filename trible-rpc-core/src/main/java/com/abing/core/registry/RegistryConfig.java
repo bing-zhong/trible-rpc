@@ -13,7 +13,7 @@ public class RegistryConfig {
     /**
      * 注册中心类型
      */
-    private RegistryKeys registry = RegistryKeys.ETCD;
+    private RegistryKeys type = RegistryKeys.ETCD;
     /**
      * 注册中心地址
      */

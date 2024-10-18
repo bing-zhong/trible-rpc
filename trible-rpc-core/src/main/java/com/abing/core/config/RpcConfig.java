@@ -1,9 +1,9 @@
 package com.abing.core.config;
 
+import com.abing.core.fault.tolerant.TolerantKeys;
 import com.abing.core.loadbalancer.LoadBalancerKeys;
 import com.abing.core.registry.RegistryConfig;
-import com.abing.core.retry.RetryConfig;
-import com.abing.core.retry.RetryKeys;
+import com.abing.core.fault.retry.RetryConfig;
 import com.abing.core.serialize.key.SerializerKeys;
 import lombok.Data;
 
@@ -21,16 +21,16 @@ public class RpcConfig {
 
     private String host = "localhost";
 
-    private Integer port = 7788;
+    private Integer port = 1205;
 
     private SerializerKeys serialization = SerializerKeys.JDK;
 
-    private RegistryConfig registryConfig = new RegistryConfig();
+    private RegistryConfig registry = new RegistryConfig();
 
     private LoadBalancerKeys balancer = LoadBalancerKeys.RANDOM;
 
     private RetryConfig retry = new RetryConfig();
 
-
+    private TolerantKeys tolerant = TolerantKeys.SILENTPROCESS;
 
 }

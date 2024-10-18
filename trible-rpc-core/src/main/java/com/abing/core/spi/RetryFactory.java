@@ -1,6 +1,6 @@
 package com.abing.core.spi;
 
-import com.abing.core.retry.RetryStrategy;
+import com.abing.core.fault.retry.RetryStrategy;
 
 /**
  * @Author CaptainBing
