@@ -1,2 +1,3 @@
 com.abing.core.serialize.JdkSerializer
 com.abing.core.serialize.HessianSerializer
+com.abing.core.serialize.KryoSerializer

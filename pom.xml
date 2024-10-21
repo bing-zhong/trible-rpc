@@ -28,6 +28,7 @@
         <etcd.version>0.7.7</etcd.version>
         <junit.version>5.7.2</junit.version>
         <guava.retry.version>2.0.0</guava.retry.version>
+        <kryo.vertion>5.6.0</kryo.vertion>
     </properties>
 
     <dependencyManagement>
@@ -62,6 +63,12 @@
                 <groupId>com.caucho</groupId>
                 <artifactId>hessian</artifactId>
                 <version>${hessian.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${kryo.vertion}</version>
             </dependency>
 
             <dependency>
