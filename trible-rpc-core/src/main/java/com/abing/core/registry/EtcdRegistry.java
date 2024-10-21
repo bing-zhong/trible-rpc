@@ -74,8 +74,9 @@ public class EtcdRegistry implements Registry {
         });
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
-        CronUtil.start();
-
+        if (!CronUtil.getScheduler().isStarted()) {
+            CronUtil.start();
+        }
     }
 
     @Override
@@ -172,7 +173,8 @@ public class EtcdRegistry implements Registry {
 
     @Override
     public void destroy() {
-
+        CronUtil.stop();
+        log.info("rpc heartbeat stop success");
         // 服务节点下线
         LOCAL_REGISTER_NODE_KEY_SET.forEach(this::unRegister);
         // 关闭资源

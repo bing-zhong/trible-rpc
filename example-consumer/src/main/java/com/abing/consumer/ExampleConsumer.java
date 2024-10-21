@@ -3,6 +3,7 @@ package com.abing.consumer;
 import com.abing.common.model.User;
 import com.abing.common.service.UserService;
 import com.abing.core.RpcApplication;
+import com.abing.core.bootstrap.TribleBootstrap;
 import com.abing.core.proxy.ServiceProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,8 +19,8 @@ public class ExampleConsumer {
 
     public static void main(String[] args) {
 
-        RpcApplication.init();
-//        UserService userService = new UserServiceProxy();
+        TribleBootstrap bootstrap = new TribleBootstrap();
+        bootstrap.initConsumer();
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
         user.setId(1L);

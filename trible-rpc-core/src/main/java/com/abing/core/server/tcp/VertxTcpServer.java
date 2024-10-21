@@ -30,8 +30,4 @@ public class VertxTcpServer implements Network {
 
     }
 
-    public static void main(String[] args) {
-        new VertxTcpServer().doStart(1205);
-    }
-
 }

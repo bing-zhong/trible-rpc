@@ -15,12 +15,10 @@ public enum RegistryKeys {
     /**
      * zookeeper注册中心
      */
-    ZOOKEEPER(new ZookeeperRegistry()),
+    ZOOKEEPER,
     /**
      * etcd注册中心
      */
-    ETCD(new EtcdRegistry());
-
-    private final Registry registry;
+    ETCD;
 
 }

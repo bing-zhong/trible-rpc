@@ -20,6 +20,7 @@ import com.abing.core.fault.retry.RetryStrategy;
 import com.abing.core.serialize.key.SerializerKeys;
 import com.abing.core.server.tcp.VertxTcpClient;
 import com.abing.core.spi.LoadBalancerFactory;
+import com.abing.core.spi.RegistryFactory;
 import com.abing.core.spi.RetryFactory;
 import com.abing.core.spi.TolerantFactory;
 import io.vertx.core.net.SocketAddress;
@@ -54,8 +55,7 @@ public class ServiceProxy implements InvocationHandler {
 
         // 注册中心
         RegistryConfig registryConfig = rpcConfig.getRegistry();
-        Registry registry = Registry.getInstance(registryConfig.getType());
-        registry.init(registryConfig);
+        Registry registry = RegistryFactory.getInstance(registryConfig.getType().name());
 
         List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscover(serviceName);
         if (serviceMetaInfoList.isEmpty()) {
