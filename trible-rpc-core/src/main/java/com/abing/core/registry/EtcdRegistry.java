@@ -125,14 +125,13 @@ public class EtcdRegistry implements Registry {
     @Override
     public void unRegister(String serviceNodeKey) {
 
-        String deleteKey = RpcConstant.REGISTRY_ROOT_PATH + serviceNodeKey;
         try {
-            kvClient.delete(ByteSequence.from(deleteKey, StandardCharsets.UTF_8)).get();
+            kvClient.delete(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8)).get();
             log.info("服务节点:{} 正常下线",serviceNodeKey);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(serviceNodeKey + "服务下线异常", e);
         }
-        LOCAL_REGISTER_NODE_KEY_SET.remove(deleteKey);
+        LOCAL_REGISTER_NODE_KEY_SET.remove(serviceNodeKey);
 
     }
 
@@ -173,8 +172,7 @@ public class EtcdRegistry implements Registry {
 
     @Override
     public void destroy() {
-        CronUtil.stop();
-        log.info("rpc heartbeat stop success");
+
         // 服务节点下线
         LOCAL_REGISTER_NODE_KEY_SET.forEach(this::unRegister);
         // 关闭资源
@@ -184,6 +182,9 @@ public class EtcdRegistry implements Registry {
         if (Objects.nonNull(kvClient)){
             kvClient.close();
         }
+
+        CronUtil.stop();
+        log.info("rpc heartbeat stop success");
 
     }
 }

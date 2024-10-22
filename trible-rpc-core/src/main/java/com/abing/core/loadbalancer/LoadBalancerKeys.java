@@ -17,10 +17,10 @@ public enum LoadBalancerKeys {
     /**
      * 轮询
      */
-    ROUND_ROBIN,
+    ROUNDROBIN,
     /**
      * 一致性hash
      */
-    CONSISTENCE_HASH;
+    CONSISTENCEHASH;
 
 }
