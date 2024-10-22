@@ -1,6 +1,5 @@
 package com.abing.trible.bootstrap;
 
-import com.abing.core.constant.RpcConstant;
 import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.register.LocalRegistry;
 import com.abing.core.registry.Registry;
