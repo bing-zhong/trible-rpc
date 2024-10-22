@@ -1,8 +1,8 @@
 package com.abing.trible.annotation;
 
-import com.abing.trible.bootstrap.RpcInitBootstrap;
-import com.abing.trible.bootstrap.TribleConsumerBootstrap;
-import com.abing.trible.bootstrap.TribleProviderBootstrap;
+import com.abing.trible.bootstrap.ServerBootstrap;
+import com.abing.trible.bootstrap.ConsumerBootstrap;
+import com.abing.trible.bootstrap.ProviderBootstrap;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({RpcInitBootstrap.class, TribleProviderBootstrap.class, TribleConsumerBootstrap.class})
+@Import({ServerBootstrap.class, ProviderBootstrap.class, ConsumerBootstrap.class})
 public @interface EnableTrible {
 
     boolean needServer() default true;

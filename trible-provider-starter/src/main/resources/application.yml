@@ -1,2 +1,15 @@
 server:
   port: 8889
+
+trible:
+  version: 2.0.0
+  name: trible-provider-starter
+  serialization: kryo
+  registry:
+    type: ETCD
+    address: http://127.0.0.1:2380
+  balancer: roundrobin
+  retry:
+    type: DEFAULT
+    interval: 5
+  tolerant: silentprocess

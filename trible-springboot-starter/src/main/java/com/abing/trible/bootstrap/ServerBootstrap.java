@@ -18,7 +18,7 @@ import java.io.IOException;
  * @Description
  */
 @Slf4j
-public class RpcInitBootstrap implements ImportBeanDefinitionRegistrar {
+public class ServerBootstrap implements ImportBeanDefinitionRegistrar {
 
 
     @Override

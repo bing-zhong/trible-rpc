@@ -1,7 +1,5 @@
 package com.abing.trible.bootstrap;
 
-import com.abing.core.RpcApplication;
-import com.abing.core.config.RpcConfig;
 import com.abing.core.constant.RpcConstant;
 import com.abing.core.model.registry.ServiceMetaInfo;
 import com.abing.core.register.LocalRegistry;
@@ -10,8 +8,10 @@ import com.abing.core.registry.RegistryConfig;
 import com.abing.core.spi.RegistryFactory;
 import com.abing.core.utils.RandomPortFinder;
 import com.abing.trible.annotation.TribleService;
+import com.abing.trible.config.RpcConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.annotation.Lazy;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,7 +22,14 @@ import java.net.UnknownHostException;
  * @Date 2024/10/18 17:59
  * @Description
  */
-public class TribleProviderBootstrap implements BeanPostProcessor {
+public class ProviderBootstrap implements BeanPostProcessor {
+
+    private final RpcConfiguration rpcConfiguration;
+
+    @Lazy
+    public ProviderBootstrap(RpcConfiguration rpcConfiguration) {
+        this.rpcConfiguration = rpcConfiguration;
+    }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
@@ -36,12 +43,11 @@ public class TribleProviderBootstrap implements BeanPostProcessor {
             String serviceName = interfaceClass.getName();
             LocalRegistry.register(serviceName, beanClass);
 
-            RpcConfig rpcConfig = RpcApplication.getRpcConfig();
-            RegistryConfig registryConfig = rpcConfig.getRegistry();
+            RegistryConfig registryConfig = rpcConfiguration.getRegistry();
             Registry registry = RegistryFactory.getInstance(registryConfig.getType().name());
             ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
+            serviceMetaInfo.setServiceVersion(rpcConfiguration.getVersion());
             serviceMetaInfo.setServiceName(serviceName);
-            serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
             InetAddress inetAddress = null;
             try {
                 inetAddress = InetAddress.getLocalHost();
